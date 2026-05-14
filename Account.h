@@ -12,7 +12,7 @@ protected:
     string pin;
 
 public:
-    Account(string owner, double balance);
+    Account(string owner, double balance, string pin);
 
     bool checkPin(const string &inputPin) const;
 
@@ -22,6 +22,6 @@ public:
 
     double getBalance() const;
     string getOwner() const;
-}
+};
 
 #endif

@@ -13,7 +13,7 @@ public:
 
     void applyInterest();
     void withdraw(double amount) override;
-    void display() count override;
-}
+    void display() const override;
+};
 
 #endif

@@ -11,7 +11,7 @@ void SavingsAccount::applyInterest()
 {
     double interest = balance * interestRate;
     balance += interest;
-    cout << " [%] Lihva: " << interest << "eu. (" << interestRate * 100 << "%)\n";
+    cout << " [%] Interest: " << interest << "eu. (" << interestRate * 100 << "%)\n";
     cout << "New balance: " << balance << " eu.\n";
 }
 
@@ -37,5 +37,5 @@ void SavingsAccount::display() const
     cout << " Owner        : " << owner << "\n";
     cout << " Type account : Savings\n";
     cout << " Balance      : " << balance << "eu.\n";
-    cout << " Lihva        :" << interestRate * 100 << "%\n";
+    cout << " Interest        :" << interestRate * 100 << "%\n";
 }

@@ -1,70 +1,250 @@
 #include <iostream>
+#include <string>
+#include <limits>
 #include "Account.h"
 #include "SavingsAccount.h"
 #include "BusinessAccount.h"
 using namespace std;
 
-void separatir(string title)
+// ─────────────────────────────────────────────
+//  Помощни функции
+// ─────────────────────────────────────────────
+
+void clearScreen()
 {
-    cout << "\n===================================\n";
-    cout << "   " << title << "\n";
-    cout << "\n===================================\n";
+    cout << "\n\n";
 }
 
+void separator()
+{
+    cout << "----------------------------------------\n";
+}
+
+void header(const string &title)
+{
+    cout << "\n========================================\n";
+    cout << "   " << title << "\n";
+    cout << "========================================\n";
+}
+
+// Чете число от потребителя, без да се срива при грешен вход
+double readAmount()
+{
+    double amount;
+    while (true)
+    {
+        cout << " Enter  Sum: ";
+        cin >> amount;
+        if (cin.fail() || amount <= 0)
+        {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "  [!] Enter positive sum.\n";
+        }
+        else
+        {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            return amount;
+        }
+    }
+}
+
+bool login(Account &acc)
+{
+    const int MAX_ATTEMPTS = 3;
+
+    header("Enter the system");
+
+    for (int attempt = 1; attempt <= MAX_ATTEMPTS; attempt++)
+    {
+        string inputName, inputPin;
+
+        cout << "\n  Username: ";
+        getline(cin, inputName);
+
+        cout << "  PIN (4 numbers)    : ";
+        getline(cin, inputPin);
+
+        // Проверка на дължина на PIN
+        if (inputPin.length() != 4)
+        {
+            cout << "  [!] PIN needs to be 4 numbers. (" << attempt << "/" << MAX_ATTEMPTS << " опита)\n";
+            continue;
+        }
+
+        // Проверка дали PIN съдържа само цифри
+        bool onlyDigits = true;
+        for (char c : inputPin)
+        {
+            if (c < '0' || c > '9')
+            {
+                onlyDigits = false;
+                break;
+            }
+        }
+        if (!onlyDigits)
+        {
+            cout << "  [!] PIN should be only numbers. (" << attempt << "/" << MAX_ATTEMPTS << " опита)\n";
+            continue;
+        }
+
+        // Проверка: потребителско име И PIN
+        if (inputName == acc.getOwner() && acc.checkPin(inputPin))
+        {
+            cout << "\n  [OK] Welcome, " << acc.getOwner() << "!\n";
+            return true;
+        }
+        else
+        {
+            cout << "  [X] Wrong username or PIN. (" << attempt << "/" << MAX_ATTEMPTS << " опита)\n";
+        }
+    }
+
+    cout << "\n  [!!] Too many tries. Access denied.\n";
+    return false;
+}
+
+// ─────────────────────────────────────────────
+//  Меню за спестовен акаунт
+// ─────────────────────────────────────────────
+void savingsMenu(SavingsAccount &acc)
+{
+    int choice;
+    do
+    {
+        header("Savings account — " + acc.getOwner());
+        cout << "  1. See balance\n";
+        cout << "  2. Add money\n";
+        cout << "  3. Whitdraw money\n";
+        cout << "  4. Add interest\n";
+        cout << "  0. Exit\n";
+        separator();
+        cout << "  Choose: ";
+        cin >> choice;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        cout << "\n";
+        switch (choice)
+        {
+        case 1:
+            separator();
+            acc.display();
+            separator();
+            break;
+        case 2:
+            separator();
+            acc.deposit(readAmount());
+            separator();
+            break;
+        case 3:
+            separator();
+            acc.withdraw(readAmount());
+            separator();
+            break;
+        case 4:
+            separator();
+            acc.applyInterest();
+            separator();
+            break;
+        case 0:
+            cout << "  Exiting savings account...\n";
+            break;
+        default:
+            cout << "  [!] Invalid choice.\n";
+        }
+    } while (choice != 0);
+}
+
+// ─────────────────────────────────────────────
+//  Меню за бизнес акаунт
+// ─────────────────────────────────────────────
+void businessMenu(BusinessAccount &acc)
+{
+    int choice;
+    do
+    {
+        header("Business account — " + acc.getOwner());
+        cout << "  1. See balance\n";
+        cout << "  2. Add money\n";
+        cout << "  3. Whitdraw money (+ tax)\n";
+        cout << "  0. Exit\n";
+        separator();
+        cout << "  Choose: ";
+        cin >> choice;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        cout << "\n";
+        switch (choice)
+        {
+        case 1:
+            separator();
+            acc.display();
+            separator();
+            break;
+        case 2:
+            separator();
+            acc.deposit(readAmount());
+            separator();
+            break;
+        case 3:
+            separator();
+            acc.withdraw(readAmount());
+            separator();
+            break;
+        case 0:
+            cout << "  Exiting business account...\n";
+            break;
+        default:
+            cout << "  [!] Invalid choice.\n";
+        }
+    } while (choice != 0);
+}
+
+// ─────────────────────────────────────────────
+//  ГЛАВНО МЕНЮ
+// ─────────────────────────────────────────────
 int main()
 {
-    separator("STANDART ACCOUNT");
 
-    cout << "\n-- Information about account --\n";
-    acc.display();
+    // Създаване на акаунтите с PIN
+    SavingsAccount savings("Doktor Ivanov", 2000.0, 0.05, "1234");
+    BusinessAccount business("Firm EOOD", 5000.0, 10.0, "5678");
 
-    cout << "\n-- Adding 500 eu. --\n";
-    acc.deposit(500.0);
+    int choice;
+    do
+    {
+        header("Bank system MENU");
+        cout << "  1. Savings account\n";
+        cout << "  2. Business account\n";
+        cout << "  0. Exit\n";
+        separator();
+        cout << "  Choose ";
+        cin >> choice;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-    cout << "\n-- Withdraw 200 eu. --\n";
-    acc.withdraw(200.0);
+        cout << "\n";
+        switch (choice)
+        {
 
-    cout << "\n-- Try for withdraw 5000 eu. --\n";
-    acc.withdraw(5000.0);
+        case 1:
+            if (login(savings))
+                savingsMenu(savings);
+            break;
 
-    cout << "\n-- Final balance --\n";
-    acc.display();
+        case 2:
+            if (login(business))
+                businessMenu(business);
+            break;
 
-    separator("SAVINGS ACCOUNT");
+        case 0:
+            header("GOODBYE!");
+            break;
 
-    cout << "\n-- Information about account --\n";
-    savings.display();
+        default:
+            cout << "  [!] Invalid choice.\n";
+        }
 
-    cout << "\n-- Adding 1000 eu. --\n";
-    savings.deposit(1000.0);
-
-    cout << "\n-- Lihva (5%) --\n";
-    savings.applyINterest();
-
-    cout << "\n-- Try for withdraw 300 eu. --\n";
-    savings.withdraw(300.0);
-
-    cout << "\n-- Final balance --\n";
-    savings.display();
-
-    separator("BUSINESS ACCOUNT");
-
-    cout << "\n-- Information about account --\n";
-    biz.display();
-
-    cout << "\n-- Adding 2000 eu. --\n";
-    biz.deposit(2000.0);
-
-    cout << "\n-- Withdraw 1000 eu. (+ 10 eu. tax) --\n";
-    biz.withdraw(1000.0);
-
-    cout << "\n-- Trying to withdraw more money than what you have. --\n";
-    biz.withdraw(9000.0);
-
-    cout << "\n-- Final balance --\n";
-    biz.display();
-
-    separator("END OF PROGRAM");
+    } while (choice != 0);
 
     return 0;
 }

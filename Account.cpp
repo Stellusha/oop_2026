@@ -11,7 +11,7 @@ Account::Account(string owner, double balance, string pin)
 
 bool Account::checkPin(const string &inputPin) const
 {
-    return inputPin = pin;
+    return inputPin == pin;
 }
 
 void Account::deposit(double amount)
@@ -22,7 +22,7 @@ void Account::deposit(double amount)
         return;
     }
     balance += amount;
-    cout << "[+] Added " << amount << " eu. New balance: " << balance << "eu\n"
+    cout << "[+] Added " << amount << " eu. New balance: " << balance << "eu\n";
 }
 
 void Account::withdraw(double amount)
@@ -34,7 +34,7 @@ void Account::withdraw(double amount)
     }
     if (amount > balance)
     {
-        cout << " [!] Not enought money! You have only " << balance << "eu.\n"
+        cout << " [!] Not enought money! You have only " << balance << "eu.\n";
     }
     balance -= amount;
     cout << "[-] Taken " << amount << "'eu. New balance: " << balance << "eu.\n";
