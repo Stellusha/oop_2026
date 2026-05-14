@@ -6,10 +6,6 @@
 #include "BusinessAccount.h"
 using namespace std;
 
-// ─────────────────────────────────────────────
-//  Помощни функции
-// ─────────────────────────────────────────────
-
 void clearScreen()
 {
     cout << "\n\n";
@@ -27,7 +23,6 @@ void header(const string &title)
     cout << "========================================\n";
 }
 
-// Чете число от потребителя, без да се срива при грешен вход
 double readAmount()
 {
     double amount;
@@ -68,7 +63,7 @@ bool login(Account &acc)
         // Проверка на дължина на PIN
         if (inputPin.length() != 4)
         {
-            cout << "  [!] PIN needs to be 4 numbers. (" << attempt << "/" << MAX_ATTEMPTS << " опита)\n";
+            cout << "  [!] PIN needs to be 4 numbers. (" << attempt << "/" << MAX_ATTEMPTS << " tries)\n";
             continue;
         }
 
@@ -84,7 +79,7 @@ bool login(Account &acc)
         }
         if (!onlyDigits)
         {
-            cout << "  [!] PIN should be only numbers. (" << attempt << "/" << MAX_ATTEMPTS << " опита)\n";
+            cout << "  [!] PIN should be only numbers. (" << attempt << "/" << MAX_ATTEMPTS << " tries)\n";
             continue;
         }
 
@@ -96,7 +91,7 @@ bool login(Account &acc)
         }
         else
         {
-            cout << "  [X] Wrong username or PIN. (" << attempt << "/" << MAX_ATTEMPTS << " опита)\n";
+            cout << "  [X] Wrong username or PIN. (" << attempt << "/" << MAX_ATTEMPTS << " tries)\n";
         }
     }
 
@@ -104,9 +99,6 @@ bool login(Account &acc)
     return false;
 }
 
-// ─────────────────────────────────────────────
-//  Меню за спестовен акаунт
-// ─────────────────────────────────────────────
 void savingsMenu(SavingsAccount &acc)
 {
     int choice;
@@ -155,9 +147,6 @@ void savingsMenu(SavingsAccount &acc)
     } while (choice != 0);
 }
 
-// ─────────────────────────────────────────────
-//  Меню за бизнес акаунт
-// ─────────────────────────────────────────────
 void businessMenu(BusinessAccount &acc)
 {
     int choice;
@@ -200,9 +189,6 @@ void businessMenu(BusinessAccount &acc)
     } while (choice != 0);
 }
 
-// ─────────────────────────────────────────────
-//  ГЛАВНО МЕНЮ
-// ─────────────────────────────────────────────
 int main()
 {
 
