@@ -2,7 +2,7 @@
 #include <iostream>
 using namespace std;
 
-BusinessAccount::BusinessAccount(string owner, double balance, double fee) : Account(owner, balance)
+BusinessAccount::BusinessAccount(string owner, double balance, double fee, string pin) : Account(owner, balance, pin)
 {
     this->fee = fee;
 }

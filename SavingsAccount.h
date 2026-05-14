@@ -9,7 +9,7 @@ private:
     double interestRate;
 
 public:
-    SavingsAccount(string owner, double balance, double interestRate);
+    SavingsAccount(string owner, double balance, double interestRate, string pin);
 
     void applyInterest();
     void withdraw(double amount) override;

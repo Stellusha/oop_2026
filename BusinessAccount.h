@@ -9,7 +9,7 @@ private:
     double fee;
 
 public:
-    BusinessAccount(string owner, double balance, double fee);
+    BusinessAccount(string owner, double balance, double fee, string pin);
 
     void withdraw(double amount) override;
     void display() const override;

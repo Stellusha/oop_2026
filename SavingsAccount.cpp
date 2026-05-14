@@ -2,7 +2,7 @@
 #include <iostream>
 using namespace std;
 
-SavingsAccount::SavingsAccount(string owner, double balance, double interestRate) : Account(owner, balance)
+SavingsAccount::SavingsAccount(string owner, double balance, double interestRate, string pin) : Account(owner, balance, pin)
 {
     this->interestRate = interestRate;
 }
