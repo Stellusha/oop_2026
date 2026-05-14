@@ -9,9 +9,12 @@ class Account
 protected:
     string owner;
     double balance;
+    string pin;
 
 public:
     Account(string owner, double balance);
+
+    bool checkPin(const string &inputPin) const;
 
     virtual void deposit(double amount);
     virtual void withdraw(double amount);

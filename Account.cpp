@@ -2,10 +2,16 @@
 #include <iostream>
 using namespace std;
 
-Account::Account(string owner, double balance)
+Account::Account(string owner, double balance, string pin)
 {
     this->owner = owner;
     this->balance = balance;
+    this->pin = pin;
+}
+
+bool Account::checkPin(const string &inputPin) const
+{
+    return inputPin = pin;
 }
 
 void Account::deposit(double amount)

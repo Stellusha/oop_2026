@@ -64,7 +64,7 @@ int main()
     cout << "\n-- Final balance --\n";
     biz.display();
 
-    separator(END OF PROGRAM)
+    separator("END OF PROGRAM");
 
-        return 0;
+    return 0;
 }
