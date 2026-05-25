@@ -22,10 +22,13 @@ public:
     virtual void withdraw(double amount);
     virtual void display() const;
 
-    void buyStocks(double pricePerStock, int quantity);
-    void sellStocks(double pricePerStocks, int quantity);
+    void transferToSavings(double amount);
+    void transferToMain(double amount);
 
-    Bool transferTo(Account &target, double amount);
+    void buyStocks(double pricePerStock, int quantity);
+    void sellStocks(double pricePerStock, int quantity);
+
+    bool transferTo(Account &target, double amount);
 
     double getBalance() const;
     double getSavings() const;
