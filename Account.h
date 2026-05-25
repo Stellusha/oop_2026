@@ -9,6 +9,8 @@ class Account
 protected:
     string owner;
     double balance;
+    double savings;
+    double stocks;
     string pin;
 
 public:
@@ -20,7 +22,14 @@ public:
     virtual void withdraw(double amount);
     virtual void display() const;
 
+    void buyStocks(double pricePerStock, int quantity);
+    void sellStocks(double pricePerStocks, int quantity);
+
+    Bool transferTo(Account &target, double amount);
+
     double getBalance() const;
+    double getSavings() const;
+    double getStocks() const;
     string getOwner() const;
 };
 

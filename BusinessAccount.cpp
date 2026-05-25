@@ -18,7 +18,7 @@ void BusinessAccount::withdraw(double amount)
     if (total > balance)
     {
         cout << " [!] You need more money!\n";
-        cout << "You wnat: " << amount << "eu. + tax: " << fee << " eu. = " << total << "eu.\n";
+        cout << "Needed: " << amount << "eu. + tax: " << fee << " eu. = " << total << "eu.\n";
         cout << "Balance: " << balance << " eu.\n";
         return;
     }
@@ -29,8 +29,10 @@ void BusinessAccount::withdraw(double amount)
 
 void BusinessAccount::display() const
 {
-    cout << " Owner        : " << owner << "\n";
-    cout << " Type account : Business\n";
-    cout << " Balance      : " << balance << "eu.\n";
-    cout << " Tax taking        :" << fee << " eu.\n";
+    cout << "  Owner         : " << owner << "\n";
+    cout << "  Account type  : Business\n";
+    cout << "  Main account  : " << balance << " eu.\n";
+    cout << "  Savings       : " << savings << " eu.\n";
+    cout << "  Stocks        : " << stocks << " pcs.\n";
+    cout << "  Withdraw fee  : " << fee << " eu.\n";
 }
