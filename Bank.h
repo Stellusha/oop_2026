@@ -1,3 +1,4 @@
+#ifndef BANK_H
 #define BANK_H
 
 #include "SavingsAccount.h"
@@ -12,8 +13,7 @@ public:
     Bank();
 
     Account *findByOwner(const string &name);
-
     void displayAll() const;
-}
+};
 
 #endif

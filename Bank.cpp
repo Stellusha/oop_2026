@@ -1,16 +1,16 @@
-#include "BAnk.h"
+#include "Bank.h"
 #include <iostream>
 using namespace std;
 
 Bank::Bank()
     : savings("Maria Petrova", 2000.0, 0.05, "1234"),
-      business("Firm EOOD", 500.0, 10.0, "5678")
+      business("Company Ltd", 5000.0, 10.0, "5678")
 {
 }
 
 Account *Bank::findByOwner(const string &name)
 {
-    if (saving.getOwner() == name)
+    if (savings.getOwner() == name)
         return &savings;
     if (business.getOwner() == name)
         return &business;
@@ -19,8 +19,8 @@ Account *Bank::findByOwner(const string &name)
 
 void Bank::displayAll() const
 {
-    cout << "\n--- Savings Account ---\n";
+    cout << "\n--- Savings account ---\n";
     savings.display();
-    cout << "\n--- Business Account --\n";
+    cout << "\n--- Business account ---\n";
     business.display();
 }
