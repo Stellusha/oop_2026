@@ -30,7 +30,6 @@ void SavingsAccount::withdraw(double amount)
     balance -= amount;
     cout << "  [-] Taken " << amount << " eu.  Main account: " << balance << " eu.\n";
 }
-}
 
 void SavingsAccount::display() const
 {
