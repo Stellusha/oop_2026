@@ -1,15 +1,12 @@
 #include <iostream>
 #include <string>
 #include <limits>
-#include "Account.h"
-#include "SavingsAccount.h"
-#include "BusinessAccount.h"
+#include "Bank.h"
 using namespace std;
 
-void clearScreen()
-{
-    cout << "\n\n";
-}
+// ─────────────────────────────────────────────
+//  Helper functions
+// ─────────────────────────────────────────────
 
 void separator()
 {
@@ -28,13 +25,13 @@ double readAmount()
     double amount;
     while (true)
     {
-        cout << " Enter  Sum: ";
+        cout << "  Amount (eu.): ";
         cin >> amount;
         if (cin.fail() || amount <= 0)
         {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "  [!] Enter positive sum.\n";
+            cout << "  [!] Please enter a valid positive amount.\n";
         }
         else
         {
@@ -44,30 +41,49 @@ double readAmount()
     }
 }
 
+int readInt()
+{
+    int n;
+    while (true)
+    {
+        cin >> n;
+        if (cin.fail() || n <= 0)
+        {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "  [!] Please enter a valid positive number.\n";
+        }
+        else
+        {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            return n;
+        }
+    }
+}
+
+// ─────────────────────────────────────────────
+//  Login — asks for username + 4-digit PIN
+// ─────────────────────────────────────────────
 bool login(Account &acc)
 {
     const int MAX_ATTEMPTS = 3;
-
-    header("Enter the system");
+    header("LOGIN");
 
     for (int attempt = 1; attempt <= MAX_ATTEMPTS; attempt++)
     {
         string inputName, inputPin;
 
-        cout << "\n  Username: ";
+        cout << "\n  Username      : ";
         getline(cin, inputName);
-
-        cout << "  PIN (4 numbers)    : ";
+        cout << "  PIN (4 digits): ";
         getline(cin, inputPin);
 
-        // Проверка на дължина на PIN
         if (inputPin.length() != 4)
         {
-            cout << "  [!] PIN needs to be 4 numbers. (" << attempt << "/" << MAX_ATTEMPTS << " tries)\n";
+            cout << "  [!] PIN must be exactly 4 digits. (" << attempt << "/" << MAX_ATTEMPTS << ")\n";
             continue;
         }
 
-        // Проверка дали PIN съдържа само цифри
         bool onlyDigits = true;
         for (char c : inputPin)
         {
@@ -79,39 +95,146 @@ bool login(Account &acc)
         }
         if (!onlyDigits)
         {
-            cout << "  [!] PIN should be only numbers. (" << attempt << "/" << MAX_ATTEMPTS << " tries)\n";
+            cout << "  [!] PIN must contain only digits. (" << attempt << "/" << MAX_ATTEMPTS << ")\n";
             continue;
         }
 
-        // Проверка: потребителско име И PIN
         if (inputName == acc.getOwner() && acc.checkPin(inputPin))
         {
             cout << "\n  [OK] Welcome, " << acc.getOwner() << "!\n";
             return true;
         }
-        else
-        {
-            cout << "  [X] Wrong username or PIN. (" << attempt << "/" << MAX_ATTEMPTS << " tries)\n";
-        }
+        cout << "  [X] Wrong username or PIN. (" << attempt << "/" << MAX_ATTEMPTS << ")\n";
     }
 
-    cout << "\n  [!!] Too many tries. Access denied.\n";
+    cout << "\n  [!!] Access blocked after 3 failed attempts.\n";
     return false;
 }
 
-void savingsMenu(SavingsAccount &acc)
+// ─────────────────────────────────────────────
+//  Stocks menu
+// ─────────────────────────────────────────────
+void stocksMenu(Account &acc)
 {
     int choice;
     do
     {
-        header("Savings account — " + acc.getOwner());
-        cout << "  1. See balance\n";
-        cout << "  2. Add money\n";
-        cout << "  3. Whitdraw money\n";
-        cout << "  4. Add interest\n";
-        cout << "  0. Exit\n";
+        header("STOCKS — " + acc.getOwner());
+        cout << "  Portfolio     : " << acc.getStocks() << " pcs.\n";
+        cout << "  Main account  : " << acc.getBalance() << " eu.\n";
         separator();
-        cout << "  Choose: ";
+        cout << "  1. Buy stocks\n";
+        cout << "  2. Sell stocks\n";
+        cout << "  0. Back\n";
+        separator();
+        cout << "  Choice: ";
+        cin >> choice;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        cout << "\n";
+        if (choice == 1)
+        {
+            separator();
+            cout << "  Price per stock (eu.): ";
+            double price = readAmount();
+            cout << "  Quantity: ";
+            int qty = readInt();
+            acc.buyStocks(price, qty);
+            separator();
+        }
+        else if (choice == 2)
+        {
+            separator();
+            cout << "  Price per stock (eu.): ";
+            double price = readAmount();
+            cout << "  Quantity: ";
+            int qty = readInt();
+            acc.sellStocks(price, qty);
+            separator();
+        }
+    } while (choice != 0);
+}
+
+// ─────────────────────────────────────────────
+//  Transfer menu
+// ─────────────────────────────────────────────
+void transferMenu(Account &acc, Bank &bank)
+{
+    int choice;
+    do
+    {
+        header("TRANSFER — " + acc.getOwner());
+        cout << "  Main account  : " << acc.getBalance() << " eu.\n";
+        cout << "  Savings       : " << acc.getSavings() << " eu.\n";
+        separator();
+        cout << "  1. Main account  ->  Savings (internal)\n";
+        cout << "  2. Savings       ->  Main account (internal)\n";
+        cout << "  3. Transfer to another account\n";
+        cout << "  0. Back\n";
+        separator();
+        cout << "  Choice: ";
+        cin >> choice;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        cout << "\n";
+        if (choice == 1)
+        {
+            separator();
+            acc.transferToSavings(readAmount());
+            separator();
+        }
+        else if (choice == 2)
+        {
+            separator();
+            acc.transferToMain(readAmount());
+            separator();
+        }
+        else if (choice == 3)
+        {
+            separator();
+            cout << "  Enter recipient name: ";
+            string targetName;
+            getline(cin, targetName);
+
+            if (targetName == acc.getOwner())
+            {
+                cout << "  [!] Cannot transfer to yourself. Use internal transfer instead.\n";
+            }
+            else
+            {
+                Account *target = bank.findByOwner(targetName);
+                if (target == nullptr)
+                {
+                    cout << "  [!] Account with that name was not found.\n";
+                }
+                else
+                {
+                    acc.transferTo(*target, readAmount());
+                }
+            }
+            separator();
+        }
+    } while (choice != 0);
+}
+
+// ─────────────────────────────────────────────
+//  Savings account menu
+// ─────────────────────────────────────────────
+void savingsMenu(SavingsAccount &acc, Bank &bank)
+{
+    int choice;
+    do
+    {
+        header("SAVINGS ACCOUNT — " + acc.getOwner());
+        cout << "  1. View balance\n";
+        cout << "  2. Deposit\n";
+        cout << "  3. Withdraw\n";
+        cout << "  4. Apply interest\n";
+        cout << "  5. Transfer\n";
+        cout << "  6. Stocks\n";
+        cout << "  0. Logout\n";
+        separator();
+        cout << "  Choice: ";
         cin >> choice;
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
@@ -138,8 +261,14 @@ void savingsMenu(SavingsAccount &acc)
             acc.applyInterest();
             separator();
             break;
+        case 5:
+            transferMenu(acc, bank);
+            break;
+        case 6:
+            stocksMenu(acc);
+            break;
         case 0:
-            cout << "  Exiting savings account...\n";
+            cout << "  Logging out...\n";
             break;
         default:
             cout << "  [!] Invalid choice.\n";
@@ -147,18 +276,23 @@ void savingsMenu(SavingsAccount &acc)
     } while (choice != 0);
 }
 
-void businessMenu(BusinessAccount &acc)
+// ─────────────────────────────────────────────
+//  Business account menu
+// ─────────────────────────────────────────────
+void businessMenu(BusinessAccount &acc, Bank &bank)
 {
     int choice;
     do
     {
-        header("Business account — " + acc.getOwner());
-        cout << "  1. See balance\n";
-        cout << "  2. Add money\n";
-        cout << "  3. Whitdraw money (+ tax)\n";
-        cout << "  0. Exit\n";
+        header("BUSINESS ACCOUNT — " + acc.getOwner());
+        cout << "  1. View balance\n";
+        cout << "  2. Deposit\n";
+        cout << "  3. Withdraw (+ fee)\n";
+        cout << "  4. Transfer\n";
+        cout << "  5. Stocks\n";
+        cout << "  0. Logout\n";
         separator();
-        cout << "  Choose: ";
+        cout << "  Choice: ";
         cin >> choice;
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
@@ -180,8 +314,14 @@ void businessMenu(BusinessAccount &acc)
             acc.withdraw(readAmount());
             separator();
             break;
+        case 4:
+            transferMenu(acc, bank);
+            break;
+        case 5:
+            stocksMenu(acc);
+            break;
         case 0:
-            cout << "  Exiting business account...\n";
+            cout << "  Logging out...\n";
             break;
         default:
             cout << "  [!] Invalid choice.\n";
@@ -189,47 +329,42 @@ void businessMenu(BusinessAccount &acc)
     } while (choice != 0);
 }
 
+// ─────────────────────────────────────────────
+//  MAIN MENU
+// ─────────────────────────────────────────────
 int main()
 {
-
-    // Създаване на акаунтите с PIN
-    SavingsAccount savings("Doktor Ivanov", 2000.0, 0.05, "1234");
-    BusinessAccount business("Firm EOOD", 5000.0, 10.0, "5678");
+    Bank bank;
 
     int choice;
     do
     {
-        header("Bank system MENU");
-        cout << "  1. Savings account\n";
-        cout << "  2. Business account\n";
+        header("BANKING SYSTEM — MAIN MENU");
+        cout << "  1. Savings account   (" << bank.savings.getOwner() << ")\n";
+        cout << "  2. Business account  (" << bank.business.getOwner() << ")\n";
         cout << "  0. Exit\n";
         separator();
-        cout << "  Choose ";
+        cout << "  Choice: ";
         cin >> choice;
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
         cout << "\n";
         switch (choice)
         {
-
         case 1:
-            if (login(savings))
-                savingsMenu(savings);
+            if (login(bank.savings))
+                savingsMenu(bank.savings, bank);
             break;
-
         case 2:
-            if (login(business))
-                businessMenu(business);
+            if (login(bank.business))
+                businessMenu(bank.business, bank);
             break;
-
         case 0:
             header("GOODBYE!");
             break;
-
         default:
             cout << "  [!] Invalid choice.\n";
         }
-
     } while (choice != 0);
 
     return 0;
