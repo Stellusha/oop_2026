@@ -73,9 +73,9 @@ bool login(Account &acc)
     {
         string inputName, inputPin;
 
-        cout << "\n  Username      : ";
+        cout << "\n  Username: \n";
         getline(cin, inputName);
-        cout << "  PIN (4 digits): ";
+        cout << "  PIN (4 digits): \n";
         getline(cin, inputPin);
 
         if (inputPin.length() != 4)
